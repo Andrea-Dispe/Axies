@@ -1,13 +1,7 @@
+var axios = require('axios').default;
+const Skills = require('../models/skillsModel');
 
-const roninAddresses = [
-  'ronin:173441449c81f27eb9fae7c8b45599197a947ec3',
-  'ronin:198b7d48a4f5511fc94ea46321279fabbb93d796',
-  'ronin:33ece3a3ef339d4dedda3e11f799adfb7a804bed',
-  'ronin:42e18125c3c4972bdc25c42a7bc60b1d02b3038d',
-  'ronin:f006e6000a7aac1288e95c826c18c6d87b7cf60b',
-  'ronin:16eca1b8fe8b0608d1ec298c1a122ac8315aec84',
-  'ronin:cb074838d63752813b79a95261158df72e591493',
-];
+const roninAddresses = ['ronin:a10c90215c9ffd24bed7310f396eef97d6df718b'];
 
 // all addresses
 // const roninAddresses = [
@@ -25,7 +19,7 @@ const roninAddresses = [
 //   'ronin:cb074838d63752813b79a95261158df72e591493',
 // ];
 
-export async function getAxies(req, res) {
+async function getAxies(req, res) {
   const axies = roninAddresses.map((roninAddress) => {
     const requestAxies = async function () {
       const ethAddress = turnRonintoEthAddress(roninAddress);
@@ -36,7 +30,6 @@ export async function getAxies(req, res) {
         },
       });
 
-      console.log('resp: ', resp.data.data.axies);
       return resp.data.data.axies.results;
     };
 
@@ -74,6 +67,19 @@ export async function getAxies(req, res) {
   // res.send(axies);
 }
 
+async function getSkillsController(req, res) {
+  console.log('inside getSkillsController');
+  const part = req.body;
+  const partFront = `${part.type}: ${part.name}`.trim();
+
+  const doc = await Skills.findOne({part: partFront})
+  console.log('doc: ', doc);
+  
+  res.send(doc)
+}
+
 function turnRonintoEthAddress(roninAddress) {
   return roninAddress.replace('ronin:', '0x').trim().replace(' ', '');
 }
+
+module.exports = { getSkillsController, getAxies };
